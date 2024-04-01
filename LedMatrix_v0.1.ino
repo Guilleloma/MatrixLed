@@ -70,24 +70,29 @@ const int IMAGESM_LEN = sizeof(IMAGESM)/8;
 LedControl display = LedControl(DIN,CLK,CS);
 
 void setup() {
-  display.clearDisplay(0);
-  display.shutdown (0,false);
-  display.setIntensity (0,10);
+  //Led Matrix initial configuration
+  display.clearDisplay(0); //Clean the matrix to start with all leds turned off
+  display.shutdown (0,false); //Desactivate the turn off mode, turning on the matrix
+  display.setIntensity (0,10); //Adjust the LEDs intentsity (0 to 15)
 
 }
-
+//Function to show an image in the matrix
+// Receive a uint64_t which represents the on/off LEDs
 void displayImage(uint64_t image){
-  for(int i =0; i<8; i++){
-    byte row = (image >> i*8) & 0xFF;
-    for(int j=0;j<8;j++){
-      display.setLed(0,i,j,bitRead(row,j));
+  for(int i =0; i<8; i++){ //Iteration for each row in the matrix
+    byte row = (image >> i*8) & 0xFF; //Substract 8 bits
+    for(int j=0;j<8;j++){ //Iteration for each colum
+      display.setLed(0,i,j,bitRead(row,j)); //Config the LED (i,j) acording with the image configured
     }
   }
 }
 void loop() {
+  // Show the currect image in the argumented array
   displayImage(IMAGES[i]);
+  // Increase index in 1 to pass to the next image
+  // If the final in the array is achieved, the index is restarted to 0
   if(++i >= IMAGES_LEN){
     i=0;
   }
-  delay(500);
+  delay(500); // wait before to show the next image
 }
